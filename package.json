@@ -1,0 +1,26 @@
+{
+  "name": "distributed-payments-processing-system",
+  "version": "1.0.0",
+  "description": "Designed and implemented an event‐driven payments processing system with idempotent APIs, Kafka‐based settlement workflows, and an immutable financial ledger, ensuring correctness under retries and partial failures.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yash-op7/Distributed-Payments-Processing-System.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Yash-op7/Distributed-Payments-Processing-System/issues"
+  },
+  "homepage": "https://github.com/Yash-op7/Distributed-Payments-Processing-System#readme",
+  "dependencies": {
+    "@types/node": "^25.0.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
