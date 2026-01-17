@@ -1,4 +1,5 @@
 import { Payment, PaymentProps, PaymentState } from '../core/payment';
+import { PaymentRow } from '../types';
 import { withTransaction } from './client';
 
 export class PaymentRepository {
@@ -34,7 +35,7 @@ RETURNING *`,
         });
     }
 
-    private mapRow(row: any): Payment {
+    private mapRow(row: PaymentRow): Payment {
         return new Payment({
             id: row.id,
             amountMinor: Number(row.amount_minor),

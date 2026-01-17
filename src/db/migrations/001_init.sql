@@ -28,7 +28,7 @@ CREATE TABLE payments (
 );
 
 -- Idempotency keys table
-CREATE TABLE idempotency_keys (key TEXT PRIMARY KEY,);
+CREATE TABLE idempotency_keys (key TEXT PRIMARY KEY);
 
 -- Immutable ledger table
 CREATE TABLE ledger_entries (

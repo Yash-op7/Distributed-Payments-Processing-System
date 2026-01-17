@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                   // Modern Node runtime
+    "module": "Commonjs",                    // Use native ES modules
+    "moduleResolution": "Node",            // Node-style resolution
+    "esModuleInterop": true,               // Allows `import pg from 'pg'`
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,                        // Enable strict type checking
+    "skipLibCheck": true,                  // Skip type checking of node_modules
+    "outDir": "dist",                      // Compiled JS output folder
+    "resolveJsonModule": true,             // Allow importing JSON
+    "types": ["node"]                      // Include Node types
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

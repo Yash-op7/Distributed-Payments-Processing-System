@@ -14,18 +14,23 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/Yash-op7/Distributed-Payments-Processing-System/issues"
   },
   "homepage": "https://github.com/Yash-op7/Distributed-Payments-Processing-System#readme",
   "dependencies": {
     "@types/node": "^25.0.6",
+    "body-parser": "^2.2.2",
+    "express": "^5.2.1",
+    "kafkajs": "^2.2.4",
     "pg": "^8.17.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.19.6",
+    "@types/express": "^5.0.6",
     "@types/pg": "^8.16.0"
   }
 }
