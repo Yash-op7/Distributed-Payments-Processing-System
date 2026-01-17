@@ -1,25 +1,6 @@
 // This file defines a payment as a domain entity with a controlled lifecycle, enforcing valid state transitions and preventing invalid or accidental mutations.
-export enum PaymentDirection {
-    IN = 'IN',
-    OUT = 'OUT',
-}
-export enum PaymentState {
-    CREATED = 'CREATED',
-    AUTHORIZED = 'AUTHORIZED',
-    CAPTURED = 'CAPTURED',
-    SETTLED = 'SETTLED',
-    FAILED = 'FAILED',
-}
 
-export interface PaymentProps {
-    id: string;
-    amountMinor: number;
-    currency: string;
-    direction: PaymentDirection;
-    state: PaymentState;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { PaymentProps, PaymentState } from "../constants";
 
 
 export class Payment {

@@ -1,0 +1,12 @@
+curl -X POST http://localhost:3000/payments \
+-H "Content-Type: application/json" \
+-H "Idempotency-Key: key-create-1" \
+-d '{"amountMinor":1000,"currency":"USD","direction":"IN"}'
+
+
+curl -X POST http://localhost:3000/payments/<id>/authorize \
+-H "Idempotency-Key: key-auth-1"
+
+
+curl -X POST http://localhost:3000/payments/<id>/capture \
+-H "Idempotency-Key: key-cap-1"

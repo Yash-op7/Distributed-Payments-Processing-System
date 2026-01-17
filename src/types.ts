@@ -1,4 +1,4 @@
-import { PaymentDirection, PaymentState } from "./core/payment";
+import { PaymentDirection, PaymentState } from "./constants";
 
 export interface PaymentRow {
     id: string;

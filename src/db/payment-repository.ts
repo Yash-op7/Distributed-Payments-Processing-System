@@ -1,4 +1,5 @@
-import { Payment, PaymentProps, PaymentState } from '../core/payment';
+import { PaymentProps, PaymentState } from '../constants';
+import { Payment } from '../core/payment';
 import { PaymentRow } from '../types';
 import { withTransaction } from './client';
 

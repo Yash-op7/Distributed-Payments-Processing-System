@@ -1,4 +1,4 @@
-import { PaymentState } from './payment';
+import { PaymentState } from "../constants";
 
 export const validTransitions: Record<PaymentState, PaymentState[]> = {
     CREATED: [PaymentState.AUTHORIZED, PaymentState.FAILED],
