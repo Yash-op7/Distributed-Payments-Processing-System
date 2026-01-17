@@ -1,13 +1,13 @@
 import { KafkaEvents, PaymentDirection, PaymentState } from "./constants";
 
 export interface PaymentRow {
-    id: string;
-    amount_minor: string | number; // pg can return numeric types as string sometimes
-    currency: string;
-    direction: PaymentDirection;
-    state: PaymentState;
-    created_at: Date;
-    updated_at: Date;
+  id: string;
+  amount_minor: string | number; // pg can return numeric types as string sometimes
+  currency: string;
+  direction: PaymentDirection;
+  state: PaymentState;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export type KafkaEventBaseType<TPayload extends object = {}> = {
@@ -15,3 +15,11 @@ export type KafkaEventBaseType<TPayload extends object = {}> = {
   event_type: KafkaEvents;
   partition_key?: string;
 } & TPayload;
+
+export type PaymentEventPayload = {
+  payment_id: string;
+  amount_minor: number;
+  currency: string;
+  direction: string;
+  timestamp: string;
+};

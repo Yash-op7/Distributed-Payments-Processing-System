@@ -6,7 +6,7 @@ import { PaymentRepository } from '../db/payment-repository';
 import { handleIdempotency } from './idempotency';
 import { initKafkaProducer, publishEvent } from '../kafka/producer';
 import { APIRoutes, CustomHTTPHeaders, KafkaEvents, KafkaTopics, PaymentDirection, PaymentState } from '../constants';
-import { KafkaEventBaseType } from '../types';
+import { KafkaEventBaseType, PaymentEventPayload } from '../types';
 
 const app = express();
 app.use(bodyParser.json());
@@ -27,7 +27,7 @@ app.post(APIRoutes.CREATE_PAYMENT, async (req, res) => {
         const result = await handleIdempotency(key, req.body, async (dbClient: any) => {
             const { amountMinor, currency, direction } = req.body;
 
-            const payment = await repo.create({
+            const payment = await repo.create(dbClient, {
                 id: uuidv4(),
                 amountMinor,
                 currency,
@@ -35,15 +35,7 @@ app.post(APIRoutes.CREATE_PAYMENT, async (req, res) => {
                 state: PaymentState.CREATED,
             });
 
-            type PaymentCreatedPayload = {
-                payment_id: string;
-                amount_minor: number;
-                currency: string;
-                direction: string;
-                timestamp: string;
-            };
-
-            const event: KafkaEventBaseType<PaymentCreatedPayload> = {
+            const event: KafkaEventBaseType<PaymentEventPayload> = {
                 event_id: uuidv4(),
                 event_type: KafkaEvents.PAYMENT_CREATED,
                 payment_id: payment.id,
@@ -68,20 +60,20 @@ app.post(APIRoutes.CREATE_PAYMENT, async (req, res) => {
     }
 });
 
-// Authorize
+// Authorize payment
 app.post(APIRoutes.AUTHORIZE_PAYMENT, async (req, res) => {
     try {
         const key = requireIdempotencyKey(req);
         const id = req.params.id;
 
-        const result = await handleIdempotency(key, req.body, async () => {
-            const payment = await repo.findById(id);
+        const result = await handleIdempotency(key, req.body, async (dbClient: any) => {
+            const payment = await repo.findById(dbClient, id);
             if (!payment) throw new Error('Payment not found');
 
             payment.authorize();
-            await repo.updateState(id, payment.state);
+            await repo.updateState(dbClient, id, payment.state);
 
-            const event = {
+            const event: KafkaEventBaseType<PaymentEventPayload> = {
                 event_id: uuidv4(),
                 event_type: KafkaEvents.PAYMENT_AUTHORIZED,
                 payment_id: id,
@@ -91,7 +83,10 @@ app.post(APIRoutes.AUTHORIZE_PAYMENT, async (req, res) => {
                 timestamp: new Date().toISOString(),
             };
 
-            await publishEvent(KafkaTopics.PAYMENTS_EVENTS, event);
+            await repo.saveOutboxEvent(dbClient, {
+                topic: KafkaTopics.PAYMENTS_EVENTS,
+                payload: event,
+            });
 
             return payment.toJSON();
         });
@@ -102,21 +97,22 @@ app.post(APIRoutes.AUTHORIZE_PAYMENT, async (req, res) => {
     }
 });
 
+// Capture payment
 app.post(APIRoutes.CAPTURE_PAYMENT, async (req, res) => {
     try {
         const key = requireIdempotencyKey(req);
         const id = req.params.id;
 
-        const result = await handleIdempotency(key, req.body, async () => {
-            const payment = await repo.findById(id);
+        const result = await handleIdempotency(key, req.body, async (dbClient: any) => {
+            const payment = await repo.findById(dbClient, id);
             if (!payment) throw new Error('Payment not found');
 
             payment.capture();
-            await repo.updateState(id, payment.state);
+            await repo.updateState(dbClient, id, payment.state);
 
-            const event = {
+            const event: KafkaEventBaseType<PaymentEventPayload> = {
                 event_id: uuidv4(),
-                event_type: PaymentState.CAPTURED,
+                event_type: KafkaEvents.PAYMENT_CAPTURED,
                 payment_id: id,
                 amount_minor: payment.amountMinor,
                 currency: payment.currency,
@@ -124,7 +120,10 @@ app.post(APIRoutes.CAPTURE_PAYMENT, async (req, res) => {
                 timestamp: new Date().toISOString(),
             };
 
-            await publishEvent(KafkaTopics.PAYMENTS_EVENTS, event);
+            await repo.saveOutboxEvent(dbClient, {
+                topic: KafkaTopics.PAYMENTS_EVENTS,
+                payload: event,
+            });
 
             return payment.toJSON();
         });
