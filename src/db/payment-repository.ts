@@ -1,4 +1,4 @@
-import { PaymentProps, PaymentState } from '../constants';
+import { KafkaTopics, PaymentProps, PaymentState } from '../constants';
 import { Payment } from '../core/payment';
 import { PaymentRow } from '../types';
 import { withTransaction } from './client';
@@ -35,6 +35,18 @@ RETURNING *`,
             );
         });
     }
+
+    async saveOutboxEvent(
+        client: any,
+        event: { topic: KafkaTopics; payload: any; partition_key?: string }
+    ) {
+        await client.query(
+            `INSERT INTO outbox_events (topic, partition_key, payload)
+     VALUES ($1, $2, $3)`,
+            [event.topic, event.partition_key ?? null, event.payload]
+        );
+    }
+
 
     private mapRow(row: PaymentRow): Payment {
         return new Payment({

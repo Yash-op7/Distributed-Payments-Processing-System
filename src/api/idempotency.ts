@@ -4,7 +4,7 @@ import { withTransaction } from '../db/client';
 export async function handleIdempotency(
     key: string,
     body: any,
-    handler: () => Promise<any>
+    handler: (dbClient: any) => Promise<any>
 ): Promise<any> {
     const hash = crypto.createHash('sha256').update(JSON.stringify(body)).digest('hex');
 
@@ -22,7 +22,7 @@ export async function handleIdempotency(
             return row.response_json;
         }
 
-        const response = await handler();
+        const response = await handler(client);
 
         await client.query(
             `INSERT INTO idempotency_keys (key, request_hash, response_json, expires_at)

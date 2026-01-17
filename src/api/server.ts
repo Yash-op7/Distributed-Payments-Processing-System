@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { PaymentRepository } from '../db/payment-repository';
 import { handleIdempotency } from './idempotency';
 import { initKafkaProducer, publishEvent } from '../kafka/producer';
-import { APIRoutes, CustomHTTPHeaders, KafkaTopics, PaymentDirection, PaymentState } from '../constants';
+import { APIRoutes, CustomHTTPHeaders, KafkaEvents, KafkaTopics, PaymentDirection, PaymentState } from '../constants';
+import { KafkaEventBaseType } from '../types';
 
 const app = express();
 app.use(bodyParser.json());
@@ -23,7 +24,7 @@ app.post(APIRoutes.CREATE_PAYMENT, async (req, res) => {
     try {
         const key = requireIdempotencyKey(req);
 
-        const result = await handleIdempotency(key, req.body, async () => {
+        const result = await handleIdempotency(key, req.body, async (dbClient: any) => {
             const { amountMinor, currency, direction } = req.body;
 
             const payment = await repo.create({
@@ -34,9 +35,17 @@ app.post(APIRoutes.CREATE_PAYMENT, async (req, res) => {
                 state: PaymentState.CREATED,
             });
 
-            const event = {
+            type PaymentCreatedPayload = {
+                payment_id: string;
+                amount_minor: number;
+                currency: string;
+                direction: string;
+                timestamp: string;
+            };
+
+            const event: KafkaEventBaseType<PaymentCreatedPayload> = {
                 event_id: uuidv4(),
-                event_type: PaymentState.CREATED,
+                event_type: KafkaEvents.PAYMENT_CREATED,
                 payment_id: payment.id,
                 amount_minor: payment.amountMinor,
                 currency: payment.currency,
@@ -44,7 +53,11 @@ app.post(APIRoutes.CREATE_PAYMENT, async (req, res) => {
                 timestamp: new Date().toISOString(),
             };
 
-            await publishEvent(KafkaTopics.PAYMENTS_EVENTS, event);
+            // await publishEvent(KafkaTopics.PAYMENTS_EVENTS, event);
+            await repo.saveOutboxEvent(dbClient, {
+                topic: KafkaTopics.PAYMENTS_EVENTS,
+                payload: event,
+            })
 
             return payment.toJSON();
         });
@@ -70,7 +83,7 @@ app.post(APIRoutes.AUTHORIZE_PAYMENT, async (req, res) => {
 
             const event = {
                 event_id: uuidv4(),
-                event_type: PaymentState.AUTHORIZED,
+                event_type: KafkaEvents.PAYMENT_AUTHORIZED,
                 payment_id: id,
                 amount_minor: payment.amountMinor,
                 currency: payment.currency,

@@ -1,4 +1,4 @@
-import { PaymentDirection, PaymentState } from "./constants";
+import { KafkaEvents, PaymentDirection, PaymentState } from "./constants";
 
 export interface PaymentRow {
     id: string;
@@ -9,3 +9,9 @@ export interface PaymentRow {
     created_at: Date;
     updated_at: Date;
 }
+
+export type KafkaEventBaseType<TPayload extends object = {}> = {
+  event_id: string;
+  event_type: KafkaEvents;
+  partition_key?: string;
+} & TPayload;
