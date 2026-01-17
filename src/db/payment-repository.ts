@@ -35,6 +35,9 @@ export class PaymentRepository {
         client: PoolClient,
         event: { topic: KafkaTopics; payload: any; partition_key?: string }
     ) {
+        if(!event.topic || !event.payload) {
+            throw new Error('Invalid outbox event');
+        }
         await client.query(
             `INSERT INTO outbox_events (topic, partition_key, payload)
              VALUES ($1, $2, $3)`,

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "ts-node src/db/migrate.ts",
-    "start:api": "ts-node-dev src/api/server.ts"
+    "start:api": "ts-node-dev src/api/server.ts",
+    "start:outbox-publisher": "ts-node src/kafka/run-outbox-publisher.ts"
   },
   "repository": {
     "type": "git",

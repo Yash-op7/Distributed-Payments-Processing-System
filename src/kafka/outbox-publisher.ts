@@ -30,6 +30,8 @@ export async function runOutboxPublisher() {
         continue;
       }
 
+      console.log(`Publishing ${rows.length} events from outbox...`);
+
       for (const row of rows) {
         await producer.send({
           topic: row.topic,

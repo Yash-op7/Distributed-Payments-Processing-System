@@ -3,7 +3,7 @@ import { withTransaction } from '../db/client';
 
 export async function handleIdempotency(
     key: string,
-    body: any,
+    body: any = {},
     handler: (dbClient: any) => Promise<any>
 ): Promise<any> {
     const hash = crypto.createHash('sha256').update(JSON.stringify(body)).digest('hex');
