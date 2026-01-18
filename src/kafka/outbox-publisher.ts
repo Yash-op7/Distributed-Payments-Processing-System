@@ -4,7 +4,8 @@ import { producer } from './producer';
 const BATCH_SIZE = 100;
 
 export async function runOutboxPublisher() {
-  console.log('🚀 Outbox publisher started');
+  console.log(`🚀 Outbox publisher started (pid=${process.pid})`);
+
 
   while (true) {
     const client = await pool.connect();
