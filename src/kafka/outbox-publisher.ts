@@ -42,6 +42,7 @@ export async function runOutboxPublisher() {
             },
           ],
         });
+        console.log('✅ Published outbox event id:', row.id);
 
         await client.query(
           `UPDATE outbox_events

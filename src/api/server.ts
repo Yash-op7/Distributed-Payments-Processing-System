@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { PaymentRepository } from '../db/payment-repository';
 import { handleIdempotency } from './idempotency';
-import { initKafkaProducer, publishEvent } from '../kafka/producer';
+import { initKafkaProducer } from '../kafka/producer';
 import { APIRoutes, CustomHTTPHeaders, KafkaEvents, KafkaTopics, PaymentDirection, PaymentState } from '../constants';
 import { KafkaEventBaseType, PaymentEventPayload } from '../types';
 

@@ -2,7 +2,7 @@ import { runOutboxPublisher } from './outbox-publisher';
 import { initKafkaProducer } from './producer';
 
 async function main() {
-    await initKafkaProducer(); // make sure Kafka producer is connected
+    await initKafkaProducer(); 
     await runOutboxPublisher();
 }
 
