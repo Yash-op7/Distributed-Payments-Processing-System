@@ -8,9 +8,9 @@
     "migrate": "ts-node src/db/migrate.ts",
     "start:api": "ts-node-dev --respawn --transpile-only src/api/server.ts",
     "start:outbox-publisher": "ts-node src/kafka/run-outbox-publisher.ts",
-    "dev": "concurrently -k -n API,OUTBOX -c blue,green \"npm run start:api\" \"npm run start:outbox-publisher\"",
     "start:settlement-worker": "ts-node src/workers/settlement-worker.ts",
-    "start:ledger-worker": "ts-node src/workers/ledger-worker.ts"
+    "start:ledger-worker": "ts-node src/workers/ledger-worker.ts",
+    "start:all": "concurrently -k -n API,OUTBOX,SETTLEMENT,LEDGER -c blue,green,yellow,magenta \"npm run start:api\" \"npm run start:outbox-publisher\" \"npm run start:settlement-worker\" \"npm run start:ledger-worker\""
   },
   "repository": {
     "type": "git",

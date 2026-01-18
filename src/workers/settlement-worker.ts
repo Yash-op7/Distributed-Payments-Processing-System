@@ -8,7 +8,7 @@ export async function runSettlementWorker() {
     const consumer = createConsumer(KafkaConsumerGroups.SETTLEMENT_WORKERS);
 
     await consumer.connect();
-    await consumer.subscribe({ topic: KafkaTopics.PAYMENTS_EVENTS });
+    await consumer.subscribe({ topic: KafkaTopics.PAYMENTS_EVENTS, fromBeginning: true });
 
     console.log('⚙️ Settlement worker started');
 
@@ -104,3 +104,8 @@ async function processSettlementEvent(message: any): Promise<boolean> {
  * 1. Performance: Currently, one transaction per message
  * 2. Implement DLQ for poison messages
  */
+
+runSettlementWorker().catch((err) => {
+    console.error('❌ Settlement worker failed to start', err);
+    process.exit(1);
+});

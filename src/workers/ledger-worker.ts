@@ -7,7 +7,7 @@ export async function runLedgerWorker() {
     const consumer = createConsumer(KafkaConsumerGroups.LEDGER_WORKERS);
 
     await consumer.connect();
-    await consumer.subscribe({ topic: KafkaTopics.PAYMENTS_EVENTS });
+    await consumer.subscribe({ topic: KafkaTopics.PAYMENTS_EVENTS, fromBeginning: true });
 
     console.log('📒 Ledger worker started');
 
@@ -65,6 +65,7 @@ async function processLedgerWriteEvent(message: any): Promise<boolean> {
                 `INSERT INTO ${DBTables.PROCESSED_EVENTS} (event_id) VALUES ($1)`,
                 [event.event_id]
             );
+            console.log(`📒 Ledger entry created for payment ${event.payment_id}`);
             return true;
         })
     } catch (err) {
@@ -72,3 +73,8 @@ async function processLedgerWriteEvent(message: any): Promise<boolean> {
         return false
     }
 }
+
+runLedgerWorker().catch((err) => {
+    console.error('❌ Ledger worker failed to start', err);
+    process.exit(1);
+});
