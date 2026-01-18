@@ -1,3 +1,4 @@
+import { DBTables } from '../constants';
 import { pool } from '../db/client';
 import { producer } from './producer';
 
@@ -16,7 +17,7 @@ export async function runOutboxPublisher() {
       const { rows } = await client.query(
         `
         SELECT id, topic, partition_key, payload
-        FROM outbox_events
+        FROM ${DBTables.OUTBOX_EVENTS}
         WHERE published_at IS NULL
         ORDER BY created_at
         LIMIT $1
@@ -46,7 +47,7 @@ export async function runOutboxPublisher() {
         console.log('✅ Published outbox event id:', row.id);
 
         await client.query(
-          `UPDATE outbox_events
+          `UPDATE ${DBTables.OUTBOX_EVENTS}
            SET published_at = now()
            WHERE id = $1`,
           [row.id]

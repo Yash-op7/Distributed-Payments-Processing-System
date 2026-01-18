@@ -41,3 +41,20 @@ export enum APIRoutes {
     AUTHORIZE_PAYMENT = '/payments/:id/authorize',
     CAPTURE_PAYMENT = '/payments/:id/capture',
 }
+
+export enum KafkaConsumerGroups {
+    SETTLEMENT_WORKERS = 'settlement-workers',
+    LEDGER_WORKERS = 'ledger-workers',
+}
+
+export enum DBTables {
+    PAYMENTS = 'payments',
+    LEDGER_ENTRIES = 'ledger_entries',
+    PROCESSED_EVENTS = 'processed_events',
+    OUTBOX_EVENTS = 'outbox_events',
+}
+
+export const enum LEDGER_ENTRY_TYPES {
+    CREDIT = 'CREDIT',
+    DEBIT = 'DEBIT',
+}
